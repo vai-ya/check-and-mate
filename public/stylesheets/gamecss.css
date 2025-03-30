@@ -1,0 +1,110 @@
+/* Import elegant fonts */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Poppins:wght@300;400;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Cinzel', serif;
+}
+
+/* Background Styling */
+body {
+    background: linear-gradient(135deg, #1E1E1E, #6B4226); /* Darker wood to deep brown */
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+    animation: ambientGlow 12s infinite alternate ease-in-out;
+}
+
+/* Chessboard Container */
+.chessboard-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #2C2C2C; /* Solid dark background */
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7);
+}
+
+/* Chessboard Styling */
+.chessboard {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    grid-template-rows: repeat(8, minmax(0, 1fr));
+    width: 500px;
+    height: 500px;
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6); /* Deep shadow for 3D effect */
+    border: 6px solid #5A3E2B; /* Rich wooden border */
+    transition: 0.4s ease-in-out;
+}
+
+/* Light and Dark Squares */
+.square {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.square.light {
+    background-color: #E0C097; /* Light wood */
+}
+
+.square.dark {
+    background-color: #8B5E3C; /* Dark wood */
+}
+
+/* Chess Pieces */
+.piece {
+    font-size: 42px;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.piece.white {
+    color: #FFF;
+    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
+}
+
+.piece.black {
+    color: #000;
+}
+
+/* Hover effect for pieces */
+.piece:hover {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.6));
+}
+
+/* Game Status */
+.status {
+    font-size: 22px;
+    font-weight: 600;
+    color: #F5F5DC;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+/* Background Animation */
+@keyframes ambientGlow {
+    0% { background: linear-gradient(135deg, #1E1E1E, #6B4226); }
+    50% { background: linear-gradient(135deg, #2C2C2C, #8B5E3C); }
+    100% { background: linear-gradient(135deg, #1E1E1E, #6B4226); }
+}
+
+.flipped .piece{
+    transform: rotate(180deg);
+}
+
+.flipped {
+    transform: rotate(180deg);
+}

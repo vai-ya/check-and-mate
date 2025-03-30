@@ -3,22 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Chess Game</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <link rel="stylesheet" href="/stylesheets/css.css">
+    <link rel="stylesheet" href="/stylesheets/gamecss.css">
 </head>
 <body>
-   
-   <div class="w-full h-screen flex items-center justify-center bg-zinc-900">
-    <div class="chessboard w-96 h-96 bg-red-900">
 
+    <div class="w-full h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#1E1E1E] via-[#6B4226] to-[#8B5E3C]">
+        <h1 class="text-white text-xl mb-4">Player: <span id="username-display"><%= username %></span></h1>
+        <div class="chessboard w-100 h-100 bg-gradient-to-br from-[#E0C097] to-[#8B5E3C] border-4 border-[#5A3E2B] shadow-lg rounded-lg"></div>
     </div>
-   </div>
 
-   <script src="https://cdn.socket.io/4.8.1/socket.io.min.js" integrity="sha384-mkQ3/7FUtcGyoppY6bz/PORYoGqOl7/aSUMn2ymDOJcapfS6PHqxhRTMh1RR0Q6+" crossorigin="anonymous"></script>
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js" integrity="sha512-xRllwz2gdZciIB+AkEbeq+gVhX8VB8XsfqeFbUh+SzHlN96dEduwtTuVuc2u9EROlmW9+yhRlxjif66ORpsgVA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-   <script src="/scripts/game.js"></script>
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js" crossorigin="anonymous"></script>
+    <script src="/scripts/game.js"></script>
 
 </body>
 </html>
