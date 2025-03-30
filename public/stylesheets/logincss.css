@@ -1,16 +1,25 @@
 /* Import elegant fonts */
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Poppins:wght@300;400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Poppins:wght@300;400;600&family=Playfair+Display:wght@500;600&display=swap');
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: 'Cinzel', serif;
+    color: aliceblue;
 }
 
-/* Background Styling */
+/* Background Styling with chess-inspired pattern */
 body {
-    background: linear-gradient(135deg, #2C2C2C, #8B5E3C); /* Dark wood to lighter brown */
+    background: 
+        linear-gradient(135deg, #2C2C2C 0%, #8B5E3C 100%),
+        repeating-linear-gradient(
+            45deg,
+            rgba(0, 0, 0, 0.1) 0px,
+            rgba(0, 0, 0, 0.1) 2px,
+            transparent 2px,
+            transparent 4px
+        );
     height: 100vh;
     display: flex;
     justify-content: center;
@@ -19,73 +28,161 @@ body {
     position: relative;
 }
 
-/* Chessboard Styling */
-.chessboard-container {
+/* Chess piece watermark effect */
+body::before {
+    content: "♔";
+    position: absolute;
+    font-size: 40vh;
+    opacity: 0.03;
+    z-index: -1;
+    animation: float 15s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(20px, 20px); }
+}
+
+/* Login Container - styled like a chessboard square */
+.login-container {
+    background: rgba(20, 20, 20, 0.85);
+    padding: 3rem;
+    border-radius: 12px;
+    box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.5),
+        inset 0 0 15px rgba(139, 94, 60, 0.3);
+    text-align: center;
+    max-width: 480px;
+    width: 90%;
+    border: 1px solid #8B5E3C;
+    backdrop-filter: blur(5px);
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.login-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 
+        0 15px 35px rgba(0, 0, 0, 0.6),
+        inset 0 0 20px rgba(139, 94, 60, 0.4);
+}
+
+.heading {
+    font-size: 2.1rem;
+    margin-bottom: 1.2rem;
+    font-weight: 600;
+    color: #f0f8ff;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    letter-spacing: 1px;
+    position: relative;
+    display: inline-block;
+}
+
+.heading::after {
+    content: "";
+    position: absolute;
+    bottom: -8px;
+    left: 25%;
+    width: 50%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #8B5E3C, transparent);
+}
+
+.msg {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 300;
+    margin-bottom: 2.5rem;
+    font-size: 1.1rem;
+    color: #f0f8ffdd;
+    line-height: 1.6;
+}
+
+/* Form Styling */
+#login-form {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    gap: 1.8rem;
 }
 
-.chessboard {
-    display: grid;
-    grid-template-columns: repeat(8, minmax(0, 1fr));
-    grid-template-rows: repeat(8, minmax(0, 1fr));
-    width: 500px;
-    height: 500px;
-    border-radius: 10px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6); /* Deep shadow for 3D effect */
-    border: 6px solid #5A3E2B; /* Rich wooden border */
-    transition: 0.4s ease-in-out;
+#username {
+    padding: 1rem 1.2rem;
+    border: none;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.08);
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    color: aliceblue;
+    border: 1px solid #8B5E3C;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
 }
 
-/* Light and Dark Squares */
-.square.light {
-    background-color: #E0C097; /* Light wood */
+#username:focus {
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 15px rgba(139, 94, 60, 0.6);
+    border-color: #a57248;
 }
 
-.square.dark {
-    background-color: #8B5E3C; /* Dark wood */
+#username::placeholder {
+    color: #f0f8ffaa;
+    font-family: 'Poppins', sans-serif;
+    font-style: italic;
+    letter-spacing: 0.5px;
 }
 
-/* Chess Pieces */
-.piece {
-    font-size: 42px;
-    cursor: pointer;
-    transition: transform 0.2s ease-in-out;
-}
-
-.piece.white {
-    color: #FFF;
-    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
-}
-
-.piece.black {
-    color: #000;
-}
-
-/* Hover effect for pieces */
-.piece:hover {
-    transform: scale(1.1);
-    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.6));
-}
-
-/* Game Status */
-.status {
-    font-size: 22px;
+.loginbtn {
+    padding: 1rem;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #8B5E3C 0%, #6D4C35 100%);
+    color: aliceblue;
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
     font-weight: 600;
-    color: #F5F5DC;
-    margin-bottom: 15px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+    cursor: pointer;
+    transition: all 0.4s ease;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    position: relative;
+    overflow: hidden;
 }
 
-/* Background Animation */
-@keyframes ambientGlow {
-    0% { background: linear-gradient(135deg, #2C2C2C, #8B5E3C); }
-    25% { background: linear-gradient(135deg, #3D3D3D, #A67C52); }
-    50% { background: linear-gradient(135deg, #2C2C2C, #8B5E3C); }
+.loginbtn::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: 0.5s;
 }
 
-body {
-    animation: ambientGlow 12s infinite alternate ease-in-out;
+.loginbtn:hover {
+    background: linear-gradient(135deg, #9D6E4C 0%, #7D5C45 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.loginbtn:hover::before {
+    left: 100%;
+}
+
+.loginbtn:active {
+    transform: translateY(1px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .login-container {
+        padding: 2rem 1.5rem;
+    }
+    
+    .heading {
+        font-size: 1.8rem;
+    }
+    
+    .msg {
+        font-size: 1rem;
+    }
 }

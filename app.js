@@ -2,7 +2,7 @@ const express = require('express')
 const socket = require('socket.io')
 const http = require('http')
 const path = require('path')
-const cookieParser = require('cookie-parser')  // Import cookie-parser
+const cookieParser = require('cookie-parser')
 const { Chess } = require('chess.js')
 
 const app = express()
@@ -10,14 +10,13 @@ const server = http.createServer(app)
 const io = socket(server)
 const chess = new Chess()
 
-let players = { white: null, black: null };
-let playerNames = { white: '', black: '' };
-
 app.set('view engine', 'ejs')
 app.use(express.static(path.join(__dirname, 'public')))
+app.use(express.urlencoded({ extended: true }))
+app.use(cookieParser())
 
-app.use(express.urlencoded({ extended: true })) // Ensure form data is parsed
-app.use(cookieParser())  // Enable cookie parsing middleware
+let waitingPlayers = []; // Queue for matchmaking
+let activeGames = {}; // Store active games with socket IDs
 
 app.get("/", (req, res) => {
     res.render("login");
@@ -26,9 +25,9 @@ app.get("/", (req, res) => {
 // Middleware to check if user is logged in
 function isAuthenticated(req, res, next) {
     if (req.cookies && req.cookies.username) {
-        return next() // Allow access
+        return next();
     } else {
-        res.redirect('/') // Redirect to login if no username
+        res.redirect('/');
     }
 }
 
@@ -36,80 +35,101 @@ function isAuthenticated(req, res, next) {
 app.post('/login', (req, res) => {
     if (req.body.username) {
         res.cookie("username", req.body.username, { path: "/" });
-        res.redirect('/waitingroom'); // Redirect to waiting page after login
+        res.redirect('/waitingroom');
     } else {
-        res.redirect('/'); // Redirect back to login if no username provided
+        res.redirect('/');
     }
 });
 
 // Waiting room route
 app.get('/waitingroom', isAuthenticated, (req, res) => {
-    res.render('waitingroom', { username: req.cookies.username }); // Show waiting page
+    res.render('waitingroom', { username: req.cookies.username });
 });
 
 // Route to render the game page
 app.get('/index', isAuthenticated, (req, res) => {
-    res.render('index', { 
-        playerWhite: playerNames.white, 
-        playerBlack: playerNames.black,
-        username: req.cookies.username  // Pass the username to the template
-    }); 
+    res.render('index', {
+        username: req.cookies.username
+    });
 });
 
-io.on('connection', function (uniquesocket) {
-    console.log('Socket connected!')
+io.on('connection', (socket) => {
+    console.log(`Player connected: ${socket.id}`);
 
-    const cookies = uniquesocket.handshake.headers.cookie || '';
+    const cookies = socket.handshake.headers.cookie || '';
     const usernameCookie = cookies.split('; ').find(row => row.startsWith('username='));
     const username = usernameCookie ? usernameCookie.split('=')[1] : 'Guest';
 
-    if (!players.white) {
-        players.white = uniquesocket.id;
-        playerNames.white = username;
-        uniquesocket.emit('playerRole', 'w');
-    } else if (!players.black) {
-        players.black = uniquesocket.id;
-        playerNames.black = username;
-        uniquesocket.emit('playerRole', 'b');
+    socket.username = username;
 
-        // Notify waiting player to load the game
-        io.to(players.white).emit('startGame', { white: playerNames.white, black: playerNames.black });
-        io.to(players.black).emit('startGame', { white: playerNames.white, black: playerNames.black });
+    // Player matchmaking logic
+    if (waitingPlayers.length > 0) {
+        const opponent = waitingPlayers.shift();
+        const gameId = `game_${opponent.id}_${socket.id}`;
+
+        activeGames[gameId] = { white: opponent, black: socket };
+
+        opponent.join(gameId);
+        socket.join(gameId);
+
+        opponent.emit('playerRole', 'w');
+        socket.emit('playerRole', 'b');
+
+        io.to(gameId).emit('startGame', {
+            white: opponent.username,
+            black: socket.username
+        });
+
+        console.log(`Match created: ${opponent.username} (White) vs ${socket.username} (Black)`);
     } else {
-        uniquesocket.emit('spectatorRole');
+        // No waiting players, add the current player to the queue
+        waitingPlayers.push(socket);
+        console.log(`${socket.username} is waiting for an opponent.`);
     }
 
-    uniquesocket.on('disconnect', function () {
-        if (uniquesocket.id === players.white) {
-            players.white = null;
-            playerNames.white = '';
-        } else if (uniquesocket.id === players.black) {
-            players.black = null;
-            playerNames.black = '';
+    // Handle player disconnection
+    socket.on('disconnect', () => {
+        waitingPlayers = waitingPlayers.filter(player => player.id !== socket.id);
+        console.log(`Player disconnected: ${socket.username}`);
+
+        // Remove from active games
+        for (let gameId in activeGames) {
+            if (activeGames[gameId].white.id === socket.id || activeGames[gameId].black.id === socket.id) {
+                delete activeGames[gameId];
+                break;
+            }
         }
     });
 
-    uniquesocket.on('move', (move) => {
+    // Handle chess moves
+    socket.on('move', (move) => {
         try {
-            if (chess.turn() === 'w' && uniquesocket.id !== players.white) return;
-            if (chess.turn() === 'b' && uniquesocket.id !== players.black) return;
+            let gameId = Object.keys(activeGames).find(gameId => 
+                activeGames[gameId].white.id === socket.id || 
+                activeGames[gameId].black.id === socket.id
+            );
+
+            if (!gameId) return;
+
+            let game = activeGames[gameId];
+
+            if (chess.turn() === 'w' && socket.id !== game.white.id) return;
+            if (chess.turn() === 'b' && socket.id !== game.black.id) return;
 
             const result = chess.move(move);
-
             if (result) {
-                io.emit('move', move);
-                io.emit('boardState', chess.fen());
+                io.to(gameId).emit('move', move);
+                io.to(gameId).emit('boardState', chess.fen());
             } else {
-                console.log('Invalid move:', move);
-                uniquesocket.emit('Invalid Move:', move);
+                socket.emit('invalidMove', move);
             }
         } catch (err) {
             console.log(err);
-            uniquesocket.emit('Invalid Move:', move);
+            socket.emit('invalidMove', move);
         }
     });
 });
 
-server.listen(5001, function () {
-    console.log('Server is listening on port 5001')
+server.listen(5001, () => {
+    console.log('Server is listening on port 5001');
 });
