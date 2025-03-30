@@ -120,3 +120,14 @@ socket.on('move', function(move){
     chess.move(move)
     renderBoard()
 })
+
+socket.on('move', (move) => {
+    const moveList = document.getElementById('move-list');
+    const newMove = document.createElement('li');
+
+    newMove.textContent = `${move.color.toUpperCase()} - ${move.san}`; // Show move in history
+    moveList.appendChild(newMove);
+
+    // Auto-scroll to the latest move
+    moveList.scrollTop = moveList.scrollHeight;
+});

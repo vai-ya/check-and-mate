@@ -101,6 +101,7 @@ io.on('connection', (socket) => {
         }
     });
 
+
     // Handle chess moves
     socket.on('move', (move) => {
         try {
@@ -108,18 +109,27 @@ io.on('connection', (socket) => {
                 activeGames[gameId].white.id === socket.id || 
                 activeGames[gameId].black.id === socket.id
             );
-
+    
             if (!gameId) return;
-
+    
             let game = activeGames[gameId];
-
+    
             if (chess.turn() === 'w' && socket.id !== game.white.id) return;
             if (chess.turn() === 'b' && socket.id !== game.black.id) return;
-
+    
             const result = chess.move(move);
+    
             if (result) {
-                io.to(gameId).emit('move', move);
+                io.to(gameId).emit('move', { color: chess.turn(), san: result.san });
                 io.to(gameId).emit('boardState', chess.fen());
+    
+                // Check for checkmate
+                if (chess.isCheckmate()) {
+                    const winner = chess.turn() === 'w' ? game.black.username : game.white.username;
+                    const loser = chess.turn() === 'w' ? game.white.username : game.black.username;
+    
+                    io.to(gameId).emit('gameOver', { winner, loser });
+                }
             } else {
                 socket.emit('invalidMove', move);
             }
@@ -128,6 +138,7 @@ io.on('connection', (socket) => {
             socket.emit('invalidMove', move);
         }
     });
+    
 });
 
 server.listen(5001, () => {

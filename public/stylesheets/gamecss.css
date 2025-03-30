@@ -19,6 +19,14 @@ body {
     position: relative;
     animation: ambientGlow 12s infinite alternate ease-in-out;
 }
+.game-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 90vh;
+    width: 100vw;
+    position: relative;
+}
 
 /* Chessboard Container */
 .chessboard-container {
@@ -85,26 +93,132 @@ body {
     filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.6));
 }
 
-/* Game Status */
-.status {
-    font-size: 22px;
-    font-weight: 600;
-    color: #F5F5DC;
-    margin-bottom: 15px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
-}
-
-/* Background Animation */
-@keyframes ambientGlow {
-    0% { background: linear-gradient(135deg, #1E1E1E, #6B4226); }
-    50% { background: linear-gradient(135deg, #2C2C2C, #8B5E3C); }
-    100% { background: linear-gradient(135deg, #1E1E1E, #6B4226); }
-}
-
 .flipped .piece{
     transform: rotate(180deg);
 }
 
 .flipped {
     transform: rotate(180deg);
+}
+
+.move-history {
+    width: 280px;
+    height: 560px;
+    margin-left: 30px;
+    background: linear-gradient(145deg, #6D4C35 0%, #8B5E3C 50%, #6D4C35 100%);
+    padding: 25px;
+    border-radius: 12px;
+    border: 2px solid #E0C097;
+    box-shadow: 
+        0 10px 25px rgba(0, 0, 0, 0.4),
+        inset 0 0 30px rgba(0, 0, 0, 0.2);
+    font-family: 'Cinzel', serif;
+    color: #F5EDE0;
+    overflow-y: scroll;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Simplified scrollbar */
+.move-history::-webkit-scrollbar {
+    width: 6px;
+}
+
+.move-history::-webkit-scrollbar-thumb {
+    background-color: #E0C097;
+    border-radius: 3px;
+}
+
+/* Royal embellishments */
+.move-history::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background: linear-gradient(to bottom, rgba(224, 192, 151, 0.3), transparent);
+    z-index: 1;
+}
+
+.move-history::after {
+    content: "♔♕♖♗♘♙";
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 24px;
+    opacity: 0.1;
+    letter-spacing: 15px;
+}
+
+.move-history h2 {
+    font-size: 24px;
+    text-align: center;
+    border-bottom: 2px solid #E0C097;
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+    color: #F5EDE0;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    letter-spacing: 1.5px;
+    position: relative;
+}
+
+.move-history h2::after,
+.move-history h2::before {
+    content: "✧";
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.6;
+}
+
+.move-history h2::after { left: 20px; }
+.move-history h2::before { right: 20px; }
+
+#move-list {
+    list-style: none;
+    padding: 0;
+    font-size: 18px;
+    counter-reset: move-counter;
+    display: flex;
+    flex-direction: column-reverse; /* Makes newest moves appear at the top */
+}
+
+
+#move-list li {
+    padding: 10px 15px 10px 30px;
+    margin-bottom: 10px;
+    background: rgba(210, 180, 140, 0.9);
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+    color: #4B3B2A;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+    transition: all 0.3s ease;
+    position: relative;
+    border-left: 4px solid #8B5E3C;
+}
+
+/* Numbered moves */
+#move-list li::before {
+    counter-increment: move-counter;
+    content: counter(move-counter) ".";
+    position: absolute;
+    left: 8px;
+    color: #8B5E3C;
+    font-weight: bold;
+}
+
+/* Alternate move colors */
+#move-list li:nth-child(even) {
+    background: rgba(224, 192, 151, 0.9);
+    border-left-color: #6D4C35;
+}
+
+#move-list li:hover {
+    transform: translateX(5px);
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.2);
+    background: rgba(245, 237, 224, 0.95);
 }
