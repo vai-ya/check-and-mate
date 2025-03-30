@@ -12,7 +12,7 @@ const renderBoard = () => {
     board.forEach((row, rowindex) => {
         row.forEach((square, squareindex) => {
             const squareElement = document.createElement("div")
-            squareElement.classList.add("square", (rowindex+squareindex)%2 === 0 ? 'light' : 'dark')
+            squareElement.classList.add("square", (rowindex + squareindex) % 2 === 0 ? 'light' : 'dark')
 
             squareElement.dataset.row = rowindex
             squareElement.dataset.col = squareindex
@@ -20,14 +20,14 @@ const renderBoard = () => {
             if (square) {
                 const pieceElement = document.createElement("div")
                 pieceElement.classList.add("piece", square.color === 'w' ? 'white' : 'black')
-                pieceElement.innerText= getPieceUnicode(square)
+                pieceElement.innerText = getPieceUnicode(square)
                 pieceElement.draggable = playerRole === square.color
 
                 pieceElement.addEventListener('dragstart', (e) => {
                     console.log("Dragging started:", sourceSquare);
-                    if(pieceElement.draggable){
+                    if (pieceElement.draggable) {
                         draggedPiece = pieceElement
-                        sourceSquare = {row: rowindex, col: squareindex}
+                        sourceSquare = { row: rowindex, col: squareindex }
                         e.dataTransfer.setData("text/plain", "")
                     }
                 })
@@ -40,13 +40,13 @@ const renderBoard = () => {
                 squareElement.appendChild(pieceElement)
             }
 
-            squareElement.addEventListener("dragover", function(e) {
+            squareElement.addEventListener("dragover", function (e) {
                 e.preventDefault()
             })
 
-            squareElement.addEventListener("drop", function(e){
+            squareElement.addEventListener("drop", function (e) {
                 e.preventDefault()
-                if(draggedPiece){
+                if (draggedPiece) {
                     const targetSource = {
                         row: parseInt(squareElement.dataset.row),
                         col: parseInt(squareElement.dataset.col)
@@ -54,20 +54,20 @@ const renderBoard = () => {
                     handleMove(sourceSquare, targetSource)
                 }
             })
-             boardElement.appendChild(squareElement)
+            boardElement.appendChild(squareElement)
         })
     })
-    if(playerRole ==='b'){
+    if (playerRole === 'b') {
         boardElement.classList.add('flipped')
-    } else{
+    } else {
         boardElement.classList.remove('flipped')
     }
 }
 
 const handleMove = (source, target) => {
     const move = {
-        from: `${String.fromCharCode(97+source.col)}${8-source.row}`,
-        to: `${String.fromCharCode(97+target.col)}${8-target.row}`,
+        from: `${String.fromCharCode(97 + source.col)}${8 - source.row}`,
+        to: `${String.fromCharCode(97 + target.col)}${8 - target.row}`,
         promotion: 'q'
     }
 
@@ -78,56 +78,53 @@ const getPieceUnicode = (piece) => {
 
     if (!piece || !piece.type) return "";
 
-   const unicodePieces = {
-    p: "♙",
-    r: "♜",
-    n: "♞",
-    b: "♝",
-    q: "♛",
-    k: "♚",
-    P: "♟",
-    R: "♖",
-    N: "♘",
-    B: "♗",
-    Q: "♕",
-    K: "♔" 
-   } 
+    const unicodePieces = {
+        p: "♙",
+        r: "♜",
+        n: "♞",
+        b: "♝",
+        q: "♛",
+        k: "♚",
+        P: "♟",
+        R: "♖",
+        N: "♘",
+        B: "♗",
+        Q: "♕",
+        K: "♔"
+    }
 
-   return unicodePieces[piece.type] || ""
+    return unicodePieces[piece.type] || ""
 }
 
 window.onload = () => {
-    console.log("Window loaded, rendering board...");
     renderBoard();
 };
 
-socket.on('playerRole', function(role){
+socket.on('playerRole', function (role) {
     playerRole = role
     renderBoard()
 })
 
-socket.on('spectatorRole', function(){
+socket.on('spectatorRole', function () {
     playerRole = null;
     renderBoard()
 })
 
-socket.on('boardState', function(fen){
+socket.on('boardState', function (fen) {
     chess.load(fen)
     renderBoard()
 })
 
-socket.on('move', function(move){
+socket.on('move', function (move) {
     chess.move(move)
     renderBoard()
 })
 
-socket.on('move', (move) => {
-    const moveList = document.getElementById('move-list');
-    const newMove = document.createElement('li');
-
-    newMove.textContent = `${move.color.toUpperCase()} - ${move.san}`; // Show move in history
-    moveList.appendChild(newMove);
-
-    // Auto-scroll to the latest move
-    moveList.scrollTop = moveList.scrollHeight;
-});
+socket.on('player_count_change', function (count) {
+    const playerCountElement = document.getElementById('player_count');
+    if (playerCountElement) {
+        playerCountElement.innerHTML = 'Number of Players Online: ' + (count);
+    } else {
+        console.error("Element with ID 'player_count' not found.");
+    }
+})

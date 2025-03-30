@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,19 +8,19 @@
     <link rel="stylesheet" href="/stylesheets/wroomcss.css">
     <script src="/socket.io/socket.io.js"></script>
 </head>
+
 <body>
     <div class="waiting-container">
         <h2>Welcome, <%= username %>!</h2>
-        <p>Just Sit Back & Relax While We Find a Worthy Opponent for You!   (=^ェ^=)</p>
+        <p>Just Sit Back & Relax While We Find a Worthy Opponent for You! (=^ェ^=)</p>
     </div>
 
     <script>
         const socket = io();
-
-        // Listen for startGame event from the server
         socket.on('startGame', () => {
-            window.location.href = "/index"; // Redirect to the chess game
+            window.location.href = "/index";
         });
     </script>
 </body>
+
 </html>

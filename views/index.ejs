@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,18 +8,17 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/stylesheets/gamecss.css">
 </head>
-<body>
 
-    <div class="w-full h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#1E1E1E] via-[#6B4226] to-[#8B5E3C]">
-        
+<body>
+    <p id="player_count">Number of Players Online: 0</p>
+    <div
+        class="w-full h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#1E1E1E] via-[#6B4226] to-[#8B5E3C]">
+
         <div class="game-container">
-            <div class="chessboard w-100 h-100 bg-gradient-to-br from-[#E0C097] to-[#8B5E3C] border-4 border-[#5A3E2B] shadow-lg rounded-lg"></div>
-            <div class="move-history">
-                <h2>Moves History</h2>
-                <ul id="move-list"></ul>
+            <div
+                class="chessboard w-100 h-100 bg-gradient-to-br from-[#E0C097] to-[#8B5E3C] border-4 border-[#5A3E2B] shadow-lg rounded-lg">
             </div>
         </div>
-        
     </div>
 
     <script src="https://cdn.socket.io/4.8.1/socket.io.min.js" crossorigin="anonymous"></script>
@@ -26,4 +26,5 @@
     <script src="/scripts/game.js"></script>
 
 </body>
+
 </html>
