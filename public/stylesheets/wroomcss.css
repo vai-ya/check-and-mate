@@ -1,0 +1,96 @@
+body {
+    font-family: 'Cinzel', serif;
+    background: radial-gradient(circle, #F5E1C8, #D2B48C);
+    color: #4B3B2A;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+    position: relative;
+}
+
+.waiting-container {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 50px;
+    border-radius: 15px;
+    backdrop-filter: blur(15px);
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+    animation: fadeIn 1.2s ease-in-out;
+    position: relative;
+    border: 2px solid rgba(139, 92, 58, 0.3);
+    overflow: hidden;
+}
+
+h1 {
+    font-size: 30px;
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.loading {
+    font-size: 22px;
+    opacity: 0.8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes wave {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+    100% { transform: translateY(0); }
+}
+
+.loading span {
+    display: inline-block;
+    animation: wave 1.5s infinite ease-in-out;
+}
+
+.loading span:nth-child(2) { animation-delay: 0.2s; }
+.loading span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes floating {
+    0% { transform: translateY(0) scale(1); opacity: 0.6; }
+    50% { transform: translateY(-30px) scale(1.2); opacity: 1; }
+    100% { transform: translateY(0) scale(1); opacity: 0.6; }
+}
+
+.orb {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    animation: floating 6s infinite ease-in-out alternate;
+    filter: blur(12px);
+}
+
+.orb:nth-child(1) {
+    top: 20%;
+    left: 10%;
+    animation-duration: 6s;
+}
+
+.orb:nth-child(2) {
+    bottom: 30%;
+    right: 20%;
+    animation-duration: 7s;
+}
+
+.orb:nth-child(3) {
+    top: 50%;
+    right: 35%;
+    animation-duration: 5.5s;
+}
